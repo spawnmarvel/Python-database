@@ -2,6 +2,7 @@
 sqlite
 <br>
 create, insert, select, update and delete
+<br>
 Integrity:
 <br>
 sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
