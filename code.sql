@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 conn = None
 datebase = "database.db"
-# statment create
+# statments create
 sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT NOT NULL, published NUMERIC NOT NULL)"
 # statement prepared
 sql_insert = "insert into holder (note, published) values (?, ?)"
@@ -29,12 +29,13 @@ def init():
         cur = conn.cursor()
         global sql_create
         cur.execute(sql_create)
-        print("tab created if not existed")
+        row = cur.fetchall()
+        msg = row
     except sqlite3.OperationalError as e:
         msg = e
     return msg
 
-def insert():
+def insert(note):
     msg = ""
     try:
         conn = get_conn()
@@ -43,9 +44,10 @@ def insert():
             cur = conn.cursor()
             timeNow = datetime.now()
             global sql_insert
-            cur.execute(sql_insert, ("Note test", timeNow))
+            cur.execute(sql_insert, (format(note), timeNow))
             conn.commit()
-            msg = "added row"
+            row = cur.fetchall()
+            msg = row
     except sqlite3.OperationalError as e:
         msg = e
     return msg
@@ -60,7 +62,7 @@ def select_all():
             global sql_select_all
             cur.execute(sql_select_all)
             row = cur.fetchall()
-            print(row)
+            msg = row       
     except sqlite3.OperationalError as e:
         msg = e
     return msg
@@ -75,7 +77,7 @@ def select_id():
             global sql_select_max_id
             cur.execute(sql_select_max_id)
             row = cur.fetchall()
-            print(row)
+            msg = row
     except sqlite3.OperationalError as e:
         msg = e
     return msg
@@ -86,6 +88,8 @@ def select_id():
 
 
 print(init())
-print(insert())
-print(select_all())
+print(insert("Testing a note"))
+rv = select_all()
+for r in rv:
+    print(r) 
 print(select_id())
