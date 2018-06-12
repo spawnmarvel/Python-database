@@ -4,7 +4,7 @@ from datetime import date, datetime
 conn = None
 datebase = "database.db"
 # statments
-sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, published NUMERIC)"
+sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT NOT NULL, published NUMERIC NOT NULL)"
 sql_insert = "insert into holder (note, published) values (?, ?)"
 sql_select_all = "select * from holder"
 sql_select_max_id = "select max(id) from holder"
