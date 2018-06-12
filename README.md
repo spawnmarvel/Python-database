@@ -1,5 +1,9 @@
 # sqlite using Python 3
 sqlite
+Integrity:
+<br>
+sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
+
 <br>
 Helpful links:
 <br>
