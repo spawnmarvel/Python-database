@@ -3,9 +3,11 @@ from datetime import date, datetime
 
 conn = None
 datebase = "database.db"
-# statments
+# statment create
 sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT NOT NULL, published NUMERIC NOT NULL)"
+# statement prepared
 sql_insert = "insert into holder (note, published) values (?, ?)"
+# statment select
 sql_select_all = "select * from holder"
 sql_select_max_id = "select max(id) from holder"
 
