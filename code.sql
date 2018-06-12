@@ -1,12 +1,13 @@
+
 import sqlite3
 from datetime import date, datetime
 
 conn = None
 datebase = "database.db"
 # statments create
-sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT NOT NULL, published NUMERIC NOT NULL)"
+sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
 # statement prepared
-sql_insert = "insert into holder (note, published) values (?, ?)"
+sql_insert = "insert into holder (title, note, published) values (?, ?, ?)"
 # statment select
 sql_select_all = "select * from holder"
 sql_select_max_id = "select max(id) from holder"
@@ -33,58 +34,73 @@ def init():
         cur = conn.cursor()
         global sql_create
         cur.execute(sql_create)
-        row = cur.fetchall()
-        msg = row
+        row = cur.fetchone()
+        if row == None:
+            msg =  "Table exists holder"
+        else:
+            msg = "Table created holder"
     except sqlite3.OperationalError as e:
         msg = e
     return msg
 
-def insert(note):
+def insert(note_title, note):
     msg = ""
     try:
+        n_title = str(note_title)
+        n_note = str(note)
         conn = get_conn()
         conn = sqlite3.connect(get_db())
         with conn:
             cur = conn.cursor()
             timeNow = datetime.now()
             global sql_insert
-            cur.execute(sql_insert, (format(note), timeNow))
+            cur.execute(sql_insert, (n_title, n_note, timeNow))
             conn.commit()
-            row = cur.fetchall()
+            row = cur.fetchone()
             msg = row
     except sqlite3.OperationalError as e:
         msg = e
+    except sqlite3.IntegrityError as i:
+        msg = i
+    except Exception as e:
+        msg = e
     return msg
 
-def update(note_content, note_id):
+def update(note, note_id):
     msg = ""
     try:
+        n_id = int(note_id)
+        n_note = str(note)
         conn = get_conn()
         conn = sqlite3.connect(get_db())
         with conn:
             cur = conn.cursor()
             global sql_update_note
-            cur.execute(sql_update_note, (format(note_content), note_id))
+            cur.execute(sql_update_note,  (n_note, n_id))
             conn.commit()
             row = cur.fetchall()
             msg = row
     except sqlite3.OperationalError as e:
         msg = e
+    except Exception as e:
+        msg = e
     return msg
 
 def delete(note_id):
     msg = ""
-    id = int(note_id)
     try:
+        n_id = int(note_id)
         conn = get_conn()
         conn = sqlite3.connect(get_db())
         with conn:
             cur = conn.cursor()
             global sql_delete_id
-            cur.execute(sql_delete_id, (id,))
+            cur.execute(sql_delete_id, (n_id,))
             row = cur.fetchall()
             msg = row
     except sqlite3.OperationalError as e:
+        msg = e
+    except Exception as e:
         msg = e
     return msg
 
@@ -122,12 +138,18 @@ def select_id():
 
 
 
-
+# valid
 print(init())
-print(insert("Testing a note"))
+# valid
+print(insert("Testnote", "Testing a note insert"))
+# iter
 rv = select_all()
 for r in rv:
     print(r) 
+# valid
 print(select_id())
 print(update("new note", 2))
-print(delete(25))
+# should cast exception
+# print(delete("gfygyg"))
+# valid
+print(delete(2))
