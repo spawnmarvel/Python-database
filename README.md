@@ -1,4 +1,4 @@
-# sqlite using Python 3
+# sqlite3 using Python 3
 sqlite
 Integrity:
 <br>
