@@ -1,4 +1,3 @@
-
 import sqlite3
 from datetime import date, datetime
 import random
@@ -10,6 +9,7 @@ conn = None
 datebase = "database.db"
 # statments create
 sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
+sql_index = "create index holder_id_index on holder (id)"
 # show tables
 sql_show = "select * from sqlite_master where type='table'"
 # statement prepared
@@ -46,6 +46,20 @@ def init_db():
         msg = e
     return msg
 
+def init_index():
+    msg = ""
+    try:
+        conn = get_conn()
+        conn = sqlite3.connect(get_db())
+        with conn:
+            cur = conn.cursor()
+            global sql_index
+            cur.execute(sql_index)
+            row = cur.fetchall()
+            msg = row 
+    except sqlite3.OperationalError as e:
+        msg = e
+    return msg
 def show_all_tables():
     msg = ""
     try:
@@ -157,6 +171,7 @@ def select_id():
 
 
 print(init_db())
+print(init_index())
 # show
 print(show_all_tables())
 # valid
