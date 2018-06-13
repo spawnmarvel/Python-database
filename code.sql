@@ -1,11 +1,17 @@
 
 import sqlite3
 from datetime import date, datetime
+import random
+
+word_list = ["New york", "Boston", "Bergen", "Oslo", "Peru", "Koh ma", "Trondheim"]
+
 
 conn = None
 datebase = "database.db"
 # statments create
 sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
+# show tables
+sql_show = "select * from sqlite_master where type='table'"
 # statement prepared
 sql_insert = "insert into holder (title, note, published) values (?, ?, ?)"
 # statment select
@@ -26,7 +32,7 @@ def get_db():
     global datebase
     return datebase
 
-def init():
+def init_db():
     msg = ""
     try:
         conn = get_conn()
@@ -35,10 +41,22 @@ def init():
         global sql_create
         cur.execute(sql_create)
         row = cur.fetchone()
-        if row == None:
-            msg =  "Table exists holder"
-        else:
-            msg = "Table created holder"
+        msg = row
+    except sqlite3.OperationalError as e:
+        msg = e
+    return msg
+
+def show_all_tables():
+    msg = ""
+    try:
+        conn = get_conn()
+        conn = sqlite3.connect(get_db())
+        with conn:
+            cur = conn.cursor()
+            global sql_show
+            cur.execute(sql_show)
+            row = cur.fetchall()
+            msg = row       
     except sqlite3.OperationalError as e:
         msg = e
     return msg
@@ -138,10 +156,15 @@ def select_id():
 
 
 
+print(init_db())
+# show
+print(show_all_tables())
 # valid
-print(init())
-# valid
-print(insert("Testnote", "Testing a note insert"))
+title = word_list[random.randint(0,6)]
+print(insert(title, "Testing a note insert with " + title))
+# exception
+print(insert("This is a too long title", "Testing a note insert too long"))
+
 # iter
 rv = select_all()
 for r in rv:
@@ -150,6 +173,6 @@ for r in rv:
 print(select_id())
 print(update("new note", 2))
 # should cast exception
-# print(delete("gfygyg"))
+print(delete("gfygyg"))
 # valid
 print(delete(2))
