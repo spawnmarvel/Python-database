@@ -1,6 +1,16 @@
 # sqlite3 & Orm using Python 3
 sqlite
 <br>
+Situations Where SQLite Works Well
+<br>
+https://www.sqlite.org/whentouse.html
+<br>
+
+Embedded devices and the internet of things, Application file format, 
+Websites, Data analysis, Cache for enterprise data, Server-side database, Data transfer format, 
+File archive and/or data container, Replacement for ad hoc disk files, Internal or temporary databases
+<br>
+# sqlite
 create, insert, select, update and delete
 <br>
 Integrity:
@@ -23,7 +33,7 @@ sqlite:///relative/path/to/file.db
 sqlite:////absolute/path/to/file.db
 <br>
 
-Orm:
+# Orm, Object-relational mapping:
 <br>
 https://www.tutorialspoint.com/flask/flask_sqlalchemy.htm
 <br>
