@@ -1,4 +1,4 @@
-# sqlite3 using Python 3
+# sqlite3 & Orm using Python 3
 sqlite
 <br>
 create, insert, select, update and delete
@@ -26,6 +26,8 @@ sqlite:////absolute/path/to/file.db
 Orm:
 <br>
 https://www.tutorialspoint.com/flask/flask_sqlalchemy.htm
+<br>
+http://flask-sqlalchemy.pocoo.org/2.3/
 
 Helpful links:
 <br>
