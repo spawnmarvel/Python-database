@@ -22,6 +22,11 @@ sqlite:///relative/path/to/file.db
 <br>
 sqlite:////absolute/path/to/file.db
 <br>
+
+Orm:
+<br>
+https://www.tutorialspoint.com/flask/flask_sqlalchemy.htm
+
 Helpful links:
 <br>
 http://zetcode.com/db/sqlitepythontutorial/
