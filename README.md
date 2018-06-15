@@ -12,6 +12,16 @@ Index:
 sql_index = "create index holder_id_index on holder (id)"
 
 <br>
+param:
+<br>
+Valid SQLite URL forms are:
+<br>
+sqlite:///:memory: (or, sqlite://)
+<br>
+sqlite:///relative/path/to/file.db
+<br>
+sqlite:////absolute/path/to/file.db
+<br>
 Helpful links:
 <br>
 http://zetcode.com/db/sqlitepythontutorial/
