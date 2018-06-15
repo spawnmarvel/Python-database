@@ -39,6 +39,7 @@ https://www.tutorialspoint.com/flask/flask_sqlalchemy.htm
 <br>
 http://flask-sqlalchemy.pocoo.org/2.3/
 
+<br>
 Helpful links:
 <br>
 http://zetcode.com/db/sqlitepythontutorial/
