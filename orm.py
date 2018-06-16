@@ -29,7 +29,11 @@ if __name__ == "__main__":
 
     
     # delete
-    rm = User.query.filter_by(email='john@com').first()
-    db.session.delete(rm)
+    #  rm = User.query.filter_by(email='john@com').first()
+    # db.session.delete(rm)
     # db.session.commit()
+    
+    # get properties
+    u = User.query.filter_by(email="john@com").first()
+    print(u.email)
     print(User.query.all())
