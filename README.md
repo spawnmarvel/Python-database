@@ -1,4 +1,4 @@
-# sqlite3 & Orm using Python 3
+# sqlite3 / Flask-SQLAlchemy and Postgres using Python 3
 sqlite
 <br>
 Situations Where SQLite Works Well
