@@ -48,6 +48,6 @@ http://pythoncentral.io/advanced-sqlite-usage-in-python/
 <br>
 https://www.tutorialspoint.com/sqlite/sqlite_data_types.htm
 
-#Postgres
+# Postgres
 <br>
 See code and import psycopg2 / (env) pip install psycopg2
