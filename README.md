@@ -51,3 +51,6 @@ https://www.tutorialspoint.com/sqlite/sqlite_data_types.htm
 # Postgres
 <br>
 See code and import psycopg2 / (env) pip install psycopg2
+<br>
+https://www.tutorialspoint.com/postgresql/postgresql_python.htm
+
