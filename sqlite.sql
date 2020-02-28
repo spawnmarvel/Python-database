@@ -1,193 +1,111 @@
 import sqlite3
-from datetime import date, datetime
-import random
+import datetime as datetime
+from app_logger import Logger
 
-word_list = ["New york", "Boston", "Bergen", "Oslo", "Peru", "Koh ma", "Trondheim"]
+logger = Logger().get()
+logger.info("sqlite")
+class SqlLiteAdapter():
+
+    # statments create
+    SQL_CREATE_TABLE = "create table if not exists postit(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
+    SQL_CREATE_INDEX = "create index if not exists postit_id_index on postit (id)"
+    # show tables
+    SQL_SHOW_TABLES = "select * from sqlite_master where type='table'"
+    # statment select
+    SQL_SELECT_ALL= "select * from postit"
+    # statement prepared
+    SQL_INSERT = "insert into postit (title, note, published) values (?, ?, ?)"
+
+    def __init__(self, database):
+        self.connection = None
+        self.database = database + ".db"
+        self.connection_status = False
 
 
-conn = None
-datebase = "database.db"
-# statments create
-sql_create = "create table if not exists holder(id INTEGER PRIMARY KEY AUTOINCREMENT, title text check(length(title) <= 15) NOT NULL,  note text NOT NULL, published DATETIME NOT NULL)"
-sql_index = "create index holder_id_index on holder (id)"
-# show tables
-sql_show = "select * from sqlite_master where type='table'"
-# statement prepared
-sql_insert = "insert into holder (title, note, published) values (?, ?, ?)"
-# statment select
-sql_select_all = "select * from holder"
-sql_select_max_id = "select max(id) from holder"
-# statment update
-sql_update_note = "update holder set note = ? where id = ?"
-# statment del
-sql_delete_id = "delete from holder where id = ?"
+    def initialize_sqllite_database(self):
+        try:
+            self.connection = self.connect_sqllite_database()
+            with self.connection:
+                cur = self.connection.cursor()
+                cur.execute(self.SQL_CREATE_TABLE)
+                logger.info("Created database: " + str(self.database))
+        except sqlite3.OperationalError as ex:
+            logger.error(ex)
 
-print("\nSQLite3 project " + str(datetime.now()) + " data\n")
+    def initialize_sqllite_index(self):
+        try:
+            self.connection = self.connect_sqllite_database()
+            with self.connection:
+                cur = self.connection.cursor()
+                cur.execute(self.SQL_CREATE_INDEX)
+                logger.info("Created index")
+        except sqlite3.OperationalError as ex:
+            logger.error(ex)
 
-def get_conn():
-    global conn
-    return conn
+    def connect_sqllite_database(self):
+        try:
+            self.connection = sqlite3.connect(self.database)
+            self.connection_status = True
+        except Exception as ex:
+            logger.error(ex)
+        return self.connection
 
-def get_db():
-    global datebase
-    return datebase
 
-def init_db():
-    msg = ""
-    try:
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        cur = conn.cursor()
-        global sql_create
-        cur.execute(sql_create)
-        row = cur.fetchone()
-        msg = row
-    except sqlite3.OperationalError as e:
-        msg = e
-    return msg
+    def close_sqllite_database(self):
+        try:
+            self.connection.close()
+            logger.info("Closing connection")
+        except sqlite3.OperationalError as ex:
+            logger.info(ex)
 
-def init_index():
-    msg = ""
-    try:
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_index
-            cur.execute(sql_index)
-            row = cur.fetchall()
-            msg = row 
-    except sqlite3.OperationalError as e:
-        msg = e
-    return msg
-def show_all_tables():
-    msg = ""
-    try:
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_show
-            cur.execute(sql_show)
-            row = cur.fetchall()
-            msg = row       
-    except sqlite3.OperationalError as e:
-        msg = e
-    return msg
+    def show_sqllite_tables(self):
+        try:
+            self.connection = self.connect_sqllite_database()
+            with self.connection:
+                cur = self.connection.cursor()
+                cur.execute(self.SQL_SHOW_TABLES)
+                row = cur.fetchall()
+                logger.info("Show tables: " + str(row))
+        except sqlite3.OperationalError as ex:
+            logger.error(ex)
 
-def insert(note_title, note):
-    msg = ""
-    try:
-        n_title = str(note_title)
-        n_note = str(note)
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            timeNow = datetime.now()
-            global sql_insert
-            cur.execute(sql_insert, (n_title, n_note, timeNow))
-            conn.commit()
-            row = cur.fetchone()
-            msg = row
-    except sqlite3.OperationalError as e:
-        msg = e
-    except sqlite3.IntegrityError as i:
-        msg = i
-    except Exception as e:
-        msg = e
-    return msg
+    def get_all_sqllite(self):
+        try:
+            self.connection = self.connect_sqllite_database()
+            with self.connection:
+                cur = self.connection.cursor()
+                cur.execute(self.SQL_SELECT_ALL)
+                row = cur.fetchall()
+                logger.info("Show rows: " + str(row))
+        except sqlite3.OperationalError as ex:
+            logger.error(ex)
 
-def update(note, note_id):
-    msg = ""
-    try:
-        n_id = int(note_id)
-        n_note = str(note)
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_update_note
-            cur.execute(sql_update_note,  (n_note, n_id))
-            conn.commit()
-            row = cur.fetchall()
-            msg = row
-    except sqlite3.OperationalError as e:
-        msg = e
-    except Exception as e:
-        msg = e
-    return msg
+    def insert_sqllite(self, note_title, note_comment):
+        try:
+            self.connection = self.connect_sqllite_database()
+            with self.connection:
+                ts = datetime.datetime.now()
+                cur = self.connection.cursor()
+                cur.execute(self.SQL_INSERT, (note_title, note_comment, ts))# wrap it
+                self.connection.commit()
+                row = cur.fetchone()
+                logger.info("Insert rows: " + str(row))
+        except sqlite3.OperationalError as ex:
+            logger.error(ex)
+        except sqlite3.IntegrityError as ex:
+            logger.error(ex)
 
-def delete(note_id):
-    msg = ""
-    try:
-        n_id = int(note_id)
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_delete_id
-            cur.execute(sql_delete_id, (n_id,))
-            row = cur.fetchall()
-            msg = row
-    except sqlite3.OperationalError as e:
-        msg = e
-    except Exception as e:
-        msg = e
-    return msg
-
-def select_all():
-    msg = ""
-    try:
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_select_all
-            cur.execute(sql_select_all)
-            row = cur.fetchall()
-            msg = row       
-    except sqlite3.OperationalError as e:
-        msg = e
-    return msg
-
-def select_id():
-    msg = ""
-    try:
-        conn = get_conn()
-        conn = sqlite3.connect(get_db())
-        with conn:
-            cur = conn.cursor()
-            global sql_select_max_id
-            cur.execute(sql_select_max_id)
-            row = cur.fetchall()
-            msg = row
-    except sqlite3.OperationalError as e:
-        msg = e
-    return msg
+    def update_sqllite(self):
+        pass
+    def delete_sqllite(self):
+        pass
 
 
 
-
-
-print(init_db())
-print(init_index())
-# show
-print(show_all_tables())
-# valid
-title = word_list[random.randint(0,6)]
-print(insert(title, "Testing a note insert with " + title))
-# exception
-print(insert("This is a too long title", "Testing a note insert too long"))
-
-# iter
-rv = select_all()
-for r in rv:
-    print(r) 
-# valid
-print(select_id())
-print(update("new note", 2))
-# should cast exception
-print(delete("gfygyg"))
-# valid
-print(delete(2))
+if __name__ == "__main__":
+    sq = SqlLiteAdapter("test2")
+    sq.initialize_sqllite_database()
+    sq.initialize_sqllite_index()
+    sq.show_sqllite_tables()
+    sq.insert_sqllite("Netflix", "Series")
+    sq.get_all_sqllite()
